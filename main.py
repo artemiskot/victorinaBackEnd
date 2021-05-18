@@ -2,8 +2,9 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import pymongo
 import json
-
+import random
 from pymongo import cursor
+
 client = pymongo.MongoClient("mongodb+srv://adming:0WatQ33l94AUHYp4@victorinazhivotnie.wkqdr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 db = client["victorinaZhivotnie"]
 
@@ -56,3 +57,14 @@ async def allQuestions():
     for i in cursor.find({}, {'_id': 0}):
         res.append(i)
     return res
+
+@app.get("/getAnimal")
+async def getAnimal():
+    response = db.question.find_one({"id": random.randint(1,db.question.count())})
+    result = {}
+    result["id"] = response["id"]
+    result["name"] = response["name"]
+    result["picture"] = response["picture"]
+    result["sound"] = response["sound"]
+    result["description"] = response["description"]
+    return result
